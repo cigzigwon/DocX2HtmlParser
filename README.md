@@ -1,5 +1,5 @@
-DocX2HtmlParser
-===============
+DocX2HtmlParser (PHP)
+=====================
 
 The best MS Word docx parser to HTML out and more to come...
 
