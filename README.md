@@ -7,11 +7,11 @@ Support for .odt (Open Document Text) coming soon.
 
 Usage
 -----
-$docxParser = new DocX2HtmlParser();
+$docx = new DocX2HtmlParser();
 
-$docxParser->setFile('~/path/to/file');
+$docx->setFile('~/path/to/file');
 
-$html = $doc->toHtml();
+$html = $docx->toHtml();
 
 echo $html;
 
