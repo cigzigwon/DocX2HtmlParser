@@ -316,7 +316,18 @@ class DocX2HtmlParser {
                       $html.= '<li>';
                     }
                     
-                    $html.= '<p>';
+                    if ($p
+                      ->pPr
+                      ->jc) {
+                      $att = $p
+                        ->pPr
+                        ->jc
+                        ->attributes('w', TRUE);
+                      $html.= '<p style="text-align:center">';
+                    } else {
+                      $html.= '<p>';
+                    }
+                    
                     $html.= $this->parseText($p, $startTags, $startAttrs);
                     $html.= '</p>';
                     
@@ -377,7 +388,8 @@ END;
   private function parseText($elem, array $tags, array $attrs) {
     $html = '';
     $styles = array(
-      'Strong'
+      'Strong',
+      'single',
     );
     
     foreach ($elem as $p => $line) {
@@ -411,7 +423,9 @@ END;
               $tags[] = 'em';
             break;
             case "u":
-              $tags[] = 'u';
+              if (isset($att['val']) && in_array($att['val'], $styles)) {
+                $tags[] = 'u';
+              }
             break;
             case "color":
               $attrs[] = 'color:#' . $att['val'];
