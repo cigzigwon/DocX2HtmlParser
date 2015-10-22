@@ -394,8 +394,6 @@ END;
     
     foreach ($elem as $p => $line) {
       $text = '';
-      $tags = [];
-      $attrs = [];
       
       if ('r' === $p) {
         
@@ -406,38 +404,42 @@ END;
           }
         }
         
-        foreach (get_object_vars($line
-          ->rPr) as $tag => $style) {
-          $att = $style->attributes('w', TRUE);
+        foreach ($line->rPr as $type => $styles) {
           
-          switch ($tag) {
-            case 'rStyle':
-              if (isset($att['val']) && in_array($att['val'], $styles)) {
+          foreach (get_object_vars($styles) as $tag => $style) {
+            $tags = [];
+            $attrs = [];
+            $att = $style->attributes('w', TRUE);
+            
+            switch ($tag) {
+              case 'rStyle':
+                if (isset($att['val']) && in_array($att['val'], $styles)) {
+                  $tags[] = 'strong';
+                }
+              break;
+              case "b":
                 $tags[] = 'strong';
-              }
-            break;
-            case "b":
-              $tags[] = 'strong';
-            break;
-            case "i":
-              $tags[] = 'em';
-            break;
-            case "u":
-              if (isset($att['val']) && in_array($att['val'], $styles)) {
-                $tags[] = 'u';
-              }
-            break;
-            case "color":
-              $attrs[] = 'color:#' . $att['val'];
-            break;
-            case "sz":
-              $attrs[] = 'font-size:' . $att['val'] / 2 . 'pt';
-            break;
+              break;
+              case "i":
+                $tags[] = 'em';
+              break;
+              case "u":
+                if (isset($att['val']) && in_array($att['val'], $styles)) {
+                  $tags[] = 'u';
+                }
+              break;
+              case "color":
+                $attrs[] = 'color:#' . $att['val'];
+              break;
+              case "sz":
+                $attrs[] = 'font-size:' . $att['val'] / 2 . 'pt';
+              break;
+            }
           }
         }
         
         $text = $line->t;
-      } else if ($p === 'hyperlink') {
+      } else if ('hyperlink' === $p) {
         $att = $line->attributes('r', TRUE);
         $text = $this
           ->getHyperlinkFromRel($att['id'], $line
