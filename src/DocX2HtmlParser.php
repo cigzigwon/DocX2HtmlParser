@@ -180,11 +180,12 @@ class DocX2HtmlParser {
       foreach ($children->body as $body) {
         
         foreach ($body as $prop => $elem) {
-          
+          $startTags = [];
+          $startAttrs = [];
+
           if ('p' === $prop) {
+            $isHeading = FALSE;
             $style = '';
-            $startTags = [];
-            $startAttrs = [];
             
             if ($elem
               ->pPr
@@ -195,6 +196,8 @@ class DocX2HtmlParser {
                 ->attributes('w', TRUE);
               
               $objectStyle = (string)$objectAttrs['val'];
+
+              if (preg_match('/Heading/', $objectStyle)) $isHeading = TRUE;
               
               if (isset($this
                 ->styles[$objectStyle])) {
@@ -224,7 +227,7 @@ class DocX2HtmlParser {
             
             if ($elem
               ->pPr
-              ->numPr) {
+              ->numPr && !$isHeading) {
               $li = TRUE;
               
               if ($openList) {
@@ -387,7 +390,7 @@ END;
    */
   private function parseText($elem, array $tags, array $attrs) {
     $html = '';
-    $styles = array(
+    $xmlFormats = array(
       'Strong',
       'single',
     );
@@ -407,13 +410,11 @@ END;
         foreach ($line->rPr as $type => $styles) {
           
           foreach (get_object_vars($styles) as $tag => $style) {
-            $tags = [];
-            $attrs = [];
             $att = $style->attributes('w', TRUE);
             
             switch ($tag) {
               case 'rStyle':
-                if (isset($att['val']) && in_array($att['val'], $styles)) {
+                if (isset($att['val']) && in_array($att['val'], $xmlFormats)) {
                   $tags[] = 'strong';
                 }
               break;
@@ -424,7 +425,7 @@ END;
                 $tags[] = 'em';
               break;
               case "u":
-                if (isset($att['val']) && in_array($att['val'], $styles)) {
+                if (isset($att['val']) && in_array($att['val'], $xmlFormats)) {
                   $tags[] = 'u';
                 }
               break;
@@ -457,6 +458,8 @@ END;
         }
         
         $html.= '<span style="' . implode(';', $attrs) . '">' . $openTags . $text . $closeTags . '</span>';
+        $attrs = [];
+        $tags = [];
       }
     }
     

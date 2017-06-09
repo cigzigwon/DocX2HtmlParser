@@ -1,0 +1,13 @@
+{
+    "name": "cigzigwon/docx-2-html-parser",
+    "description": "A singleton class that parses docx files to html",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Chris Sobeck",
+            "email": "factchkr@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
