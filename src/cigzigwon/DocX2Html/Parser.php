@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
-class DocX2HtmlParser {
+namespace cigzigwon\DocX2Html;
+
+final class Parser {
   
   /**
    * toggles debug output for development reasons
